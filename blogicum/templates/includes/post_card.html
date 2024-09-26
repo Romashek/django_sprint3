@@ -1,0 +1,13 @@
+<div class="card" style="width: 40rem;">
+  <div class="card-body">
+    <h5 class="card-title">{{ post_list.title }}</h5>
+    <h6 class="card-subtitle mb-2 text-muted">
+      <small>
+        {{ post_list.pub_date|date:"d E Y" }} | {% if post_list.location and post_list.location.is_published %}{{ post_list.location.name }}{% else %}Планета Земля{% endif %}<br>
+        От автора @{{ post_list.author.username }} в категории {% include "includes/category_link.html" %}
+      </small>
+    </h6>
+    <p class="card-text">{{ post_list.text|truncatewords:10 }}</p>
+    <a href="{% url 'blog:post_detail' post.id %}" class="card-link">Читать полный текст</a>
+  </div>
+</div>
