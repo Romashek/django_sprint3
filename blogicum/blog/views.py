@@ -20,9 +20,9 @@ def post_detail(request, post_id):
     except KeyError:
         raise Http404(f"Пост {post_id} не найден")
     if (
-        post.pub_date > datetime.now() or
-        not post.is_published or
-        (post.category and not post.category.is_published)
+        post.pub_date > datetime.now()
+        or not post.is_published
+        or (post.category and not post.category.is_published)
     ):
         raise Http404("Пост не доступен")
     context = {'post': post, }
