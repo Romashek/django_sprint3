@@ -5,21 +5,18 @@ from django.conf import settings
 # Библиотеки сторонних разработчиков
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
+from django.db.models import Q
 
 # Локальные импорты
 from blog.models import Post, Category
 
 
-def get_published_posts(now, category=None):
-    filters = {
-        'is_published': True,
-        'pub_date__lte': now,
-    }
-
-    if category:
-        filters['category'] = category
-
-    return Post.objects.filter(**filters)
+def get_published_posts(now):
+    return Post.objects.filter(
+        Q(is_published=True)
+        & Q(pub_date__lte=now)
+        & Q(category__is_published=True)
+    )
 
 
 def index(request):
