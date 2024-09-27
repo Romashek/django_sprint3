@@ -7,11 +7,18 @@ from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 
+
 # Локальные импорты
 from blog.models import Post, Category
 
 
-def get_published_posts(now):
+def get_published_posts(now, category=None):
+    if category:
+        return Post.objects.filter(
+            Q(is_published=True)
+            & Q(pub_date__lte=now)
+            & Q(category=category)
+        )
     return Post.objects.filter(
         Q(is_published=True)
         & Q(pub_date__lte=now)
