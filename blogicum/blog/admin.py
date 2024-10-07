@@ -1,4 +1,7 @@
+# Библиотеки сторонних разработчиков
 from django.contrib import admin
+
+# Локальные импорты
 from .models import Post, Category, Location
 
 
