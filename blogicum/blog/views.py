@@ -1,31 +1,21 @@
 from django.utils import timezone
 from django.conf import settings
-
-# Библиотеки сторонних разработчиков
-from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 
 # Локальные импорты
 from blog.models import Post, Category
 
 
-def get_published_posts(now, category=None):
-    if category:
-        return Post.objects.filter(
-            is_published=True,
-            pub_date__lte=now,
-            category=category
-        )
+def get_published_posts():
     return Post.objects.filter(
         is_published=True,
-        pub_date__lte=now,
+        pub_date__lte=timezone.now(),
         category__is_published=True
     )
 
 
 def index(request):
-    now = timezone.now()
-    post_list = get_published_posts(now)[:settings.POST_COUNT_ON_INDEX]
+    post_list = get_published_posts()[:settings.POST_COUNT_ON_INDEX]
     context = {
         'post_list': post_list,
     }
@@ -33,8 +23,7 @@ def index(request):
 
 
 def post_detail(request, post_id):
-    now = timezone.now()
-    post_list = get_published_posts(now)
+    post_list = get_published_posts()
     post = get_object_or_404(post_list, id=post_id)
 
     context = {
@@ -44,13 +33,15 @@ def post_detail(request, post_id):
 
 
 def category_posts(request, category_slug):
-    category = get_object_or_404(Category, slug=category_slug)
+    category = get_object_or_404(
+        Category.objects.filter(slug=category_slug, is_published=True)
+    )
 
-    if not category.is_published:
-        raise Http404('Категория не опубликована.')
-
-    now = timezone.now()
-    post_list = get_published_posts(now, category)
+    post_list = Post.objects.filter(
+        is_published=True,
+        pub_date__lte=timezone.now(),
+        category=category
+    )
 
     context = {
         'category': category,
